@@ -3,15 +3,23 @@
 
 Este repositorio contiene el análisis a fondo, diagnóstico operativo, simulador de retorno de inversión (ROI), herramienta de autodiagnóstico interactiva y pitch deck ejecutivo desarrollados por **Impulso IA** (`immpulso.dev`) para **Zona Virtual S.A. / Zonapagos**.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgeroguerra8a-dot%2FZONA-PAGOS)
+
 ---
 
 ## 🚀 Despliegue en Vivo y Uso
 
-1. **Visualización Directa:**  
-   Abra `index.html` en cualquier navegador moderno. No requiere dependencias de backend ni pasos de compilación.
-2. **Despliegue Inmediato en Vercel:**  
-   Conecte este repositorio en [Vercel](https://vercel.com/) o utilice Vercel CLI. El archivo `vercel.json` ya está configurado para despliegue estático de alto rendimiento.
-3. **Dossier Maestro en Markdown:**  
+1. **Presentación en Vivo (Activa):**  
+   👉 [**https://geroguerra8a-dot.github.io/ZONA-PAGOS/**](https://geroguerra8a-dot.github.io/ZONA-PAGOS/)  
+   Disponible inmediatamente para presentar a clientes desde cualquier dispositivo o navegador.
+
+2. **Despliegue Inmediato en Vercel (1 Clic):**  
+   Haga clic en el botón superior o abra [**este enlace de despliegue directo en Vercel**](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgeroguerra8a-dot%2FZONA-PAGOS). Vercel importará el repositorio y publicará su versión bajo un subdominio `https://zona-pagos.vercel.app` en menos de 30 segundos.
+
+3. **Visualización Local:**  
+   Abra [`index.html`](./index.html) directamente en cualquier navegador. No requiere servidores locales ni pasos de compilación (`npm run build`).
+
+4. **Dossier Maestro de Respaldo:**  
    Consulte [`DIAGNOSTICO_Y_PLAN_IMPULSO_IA_ZONAPAGOS.md`](./DIAGNOSTICO_Y_PLAN_IMPULSO_IA_ZONAPAGOS.md) para acceder al sustento documental completo de más de 400 líneas.
 
 ---
