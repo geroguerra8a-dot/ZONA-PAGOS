@@ -104,33 +104,51 @@
       </div>
 
       <!-- MAIN CONTROLS & VIEWS TOGGLE -->
-      <div class="flex items-center space-x-2 sm:space-x-4">
+      <div class="flex items-center space-x-2 sm:space-x-3">
         <!-- View Mode Buttons -->
         <div class="bg-brand-surface p-1 rounded-xl border border-brand-border flex items-center text-xs font-semibold">
-          <button id="btn-view-tabs" onclick="switchMainView('tabs')" class="px-3.5 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow">
+          <button id="btn-view-tabs" onclick="switchMainView('tabs')" class="px-3 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow">
             <span class="flex items-center space-x-1.5">
               <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-              <span class="hidden md:inline">Dossier Completo</span>
+              <span class="hidden md:inline">Dossier</span>
             </span>
           </button>
-          <button id="btn-view-slides" onclick="switchMainView('slides')" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
+          <button id="btn-view-slides" onclick="switchMainView('slides')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
             <span class="flex items-center space-x-1.5">
               <i data-lucide="presentation" class="w-3.5 h-3.5"></i>
-              <span class="hidden md:inline">Pitch Deck</span>
+              <span>Pitch Deck</span>
             </span>
           </button>
-          <button id="btn-view-diagnostic" onclick="switchMainView('diagnostic')" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
+          <button id="btn-view-diagnostic" onclick="switchMainView('diagnostic')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
             <span class="flex items-center space-x-1.5">
               <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
-              <span>Autodiagnóstico</span>
+              <span class="hidden md:inline">Autodiagnóstico</span>
             </span>
           </button>
         </div>
 
+        <!-- Fullscreen Presentation Toggle -->
+        <button onclick="toggleFullScreen()" title="Presentar en Pantalla Completa (F)" class="hidden sm:flex items-center space-x-1.5 bg-brand-surface hover:bg-brand-border text-slate-300 hover:text-white px-3 py-2 rounded-xl text-xs font-medium border border-brand-border transition">
+          <i data-lucide="maximize" class="w-3.5 h-3.5 text-brand-orange"></i>
+          <span class="hidden xl:inline">Pantalla Completa</span>
+        </button>
+
+        <!-- GitHub Link -->
+        <a href="https://github.com/geroguerra8a-dot/ZONA-PAGOS" target="_blank" title="Ver repositorio en GitHub" class="hidden xl:flex items-center space-x-1.5 bg-brand-surface hover:bg-brand-border text-slate-300 hover:text-white px-3 py-2 rounded-xl text-xs font-medium border border-brand-border transition">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>GitHub</span>
+        </a>
+
+        <!-- Vercel Direct Deploy Button -->
+        <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgeroguerra8a-dot%2FZONA-PAGOS" target="_blank" title="Desplegar en Vercel" class="hidden lg:flex items-center space-x-1.5 bg-black hover:bg-zinc-800 text-white px-3 py-2 rounded-xl text-xs font-bold border border-zinc-700 transition shadow">
+          <svg class="w-3 h-3 fill-current" viewBox="0 0 116 100"><path d="M57.5 0L115 100H0L57.5 0z"/></svg>
+          <span>Vercel</span>
+        </a>
+
         <!-- Action CTA -->
-        <a href="#contacto-modal" onclick="openContactModal()" class="hidden lg:flex items-center space-x-2 bg-gradient-to-r from-brand-orange to-brand-orange-light hover:brightness-110 text-white px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition shadow-lg shadow-brand-orange/20">
+        <a href="#contacto-modal" onclick="openContactModal()" class="flex items-center space-x-1.5 bg-gradient-to-r from-brand-orange to-brand-orange-light hover:brightness-110 text-white px-3.5 py-2 rounded-xl text-xs font-bold tracking-wide transition shadow-lg shadow-brand-orange/20">
           <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
-          <span>Conversemos</span>
+          <span>Contacto</span>
         </a>
       </div>
     </div>
@@ -980,17 +998,30 @@
   <section id="view-slides" class="hidden flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col justify-between">
     
     <!-- Presentation Toolbar -->
-    <div class="flex items-center justify-between mb-4 bg-brand-surface p-3 rounded-2xl border border-brand-border">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-brand-surface p-3.5 rounded-2xl border border-brand-border">
       <div class="flex items-center space-x-3">
-        <span class="text-xs font-bold text-brand-orange uppercase">Pitch Deck Ejecutivo</span>
-        <span class="text-xs text-brand-muted">|</span>
-        <span id="slide-indicator" class="text-xs font-semibold text-white">Diapositiva 1 de 7</span>
+        <span class="text-xs font-bold text-brand-orange uppercase flex items-center space-x-1.5">
+          <i data-lucide="presentation" class="w-3.5 h-3.5"></i>
+          <span>Pitch Deck Ejecutivo</span>
+        </span>
+        <span class="text-xs text-brand-muted hidden sm:inline">|</span>
+        <span id="slide-indicator" class="text-xs font-semibold text-white bg-brand-navy px-2.5 py-1 rounded-lg border border-brand-border">Diapositiva 1 de 7</span>
+        <span class="text-[11px] text-brand-muted hidden md:inline">(Navegue con ← / → o barra espaciadora)</span>
       </div>
       <div class="flex items-center space-x-2">
-        <button onclick="prevSlide()" class="p-2 rounded-lg bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition">
+        <button onclick="toggleFullScreen()" title="Presentar en Pantalla Completa (F)" class="px-3 py-1.5 rounded-xl bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition flex items-center space-x-1.5 text-xs font-semibold border border-brand-border">
+          <i data-lucide="maximize" class="w-3.5 h-3.5 text-brand-orange"></i>
+          <span>Pantalla Completa</span>
+        </button>
+        <button onclick="window.print()" title="Exportar Diapositivas a PDF" class="px-3 py-1.5 rounded-xl bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition flex items-center space-x-1.5 text-xs font-semibold border border-brand-border">
+          <i data-lucide="printer" class="w-3.5 h-3.5 text-brand-teal"></i>
+          <span class="hidden sm:inline">PDF</span>
+        </button>
+        <div class="h-5 w-px bg-brand-border mx-1"></div>
+        <button onclick="prevSlide()" class="p-2 rounded-xl bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition border border-brand-border">
           <i data-lucide="chevron-left" class="w-4 h-4"></i>
         </button>
-        <button onclick="nextSlide()" class="p-2 rounded-lg bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition">
+        <button onclick="nextSlide()" class="p-2 rounded-xl bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition border border-brand-border">
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1498,8 +1529,23 @@
       }
     }
 
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn('Fullscreen request failed:', err.message);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
     // Keyboard support for presentation
     document.addEventListener('keydown', (e) => {
+      if ((e.key === 'f' || e.key === 'F') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        toggleFullScreen();
+      }
       const viewSlides = document.getElementById('view-slides');
       if (!viewSlides.classList.contains('hidden')) {
         if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
