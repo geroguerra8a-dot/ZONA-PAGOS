@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico Estratégico de IA | Zonapagos · Impulso IA</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for Interactive Diagnostics & ROI -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#FF5722',
+              'orange-dark': '#E64A19',
+              'orange-light': '#FF8A65',
+              teal: '#00BFA5',
+              'teal-dark': '#00897B',
+              navy: '#0A1118',
+              surface: '#111C24',
+              card: '#16232D',
+              border: '#223544',
+              muted: '#7E97A6'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0A1118;
+      color: #E2E8F0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .gradient-orange {
+      background: linear-gradient(135deg, #FF5722 0%, #FF8A65 100%);
+    }
+    .gradient-teal {
+      background: linear-gradient(135deg, #00BFA5 0%, #26A69A 100%);
+    }
+    .gradient-card {
+      background: linear-gradient(180deg, rgba(22, 35, 45, 0.95) 0%, rgba(17, 28, 36, 0.95) 100%);
+    }
+    .glow-orange {
+      box-shadow: 0 0 40px -10px rgba(255, 87, 34, 0.35);
+    }
+    .glow-teal {
+      box-shadow: 0 0 40px -10px rgba(0, 191, 165, 0.3);
+    }
+    /* Hide scrollbars in slide deck */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .gradient-card { background: white !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body class="bg-brand-navy min-h-screen text-slate-100 flex flex-col selection:bg-brand-orange selection:text-white">
+
+  <!-- TOP BAR / NAVIGATION -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-brand-navy/90 border-b border-brand-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- LOGO & CO-BRANDING -->
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 rounded-xl bg-brand-orange flex items-center justify-center font-display font-bold text-white text-xl shadow-lg shadow-brand-orange/30">
+            IM
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl tracking-tight text-white">IMPULSO <span class="text-brand-orange">IA</span></span>
+            <span class="hidden sm:inline-block text-xs text-brand-muted block font-medium">IA · Procesos · Personas</span>
+          </div>
+        </div>
+        <div class="h-6 w-px bg-brand-border hidden sm:block"></div>
+        <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-400 bg-brand-surface px-3 py-1.5 rounded-full border border-brand-border">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Diagnóstico Estratégico: <strong>Zona Virtual / Zonapagos</strong></span>
+        </div>
+      </div>
+
+      <!-- MAIN CONTROLS & VIEWS TOGGLE -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- View Mode Buttons -->
+        <div class="bg-brand-surface p-1 rounded-xl border border-brand-border flex items-center text-xs font-semibold">
+          <button id="btn-view-tabs" onclick="switchMainView('tabs')" class="px-3.5 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+              <span class="hidden md:inline">Dossier Completo</span>
+            </span>
+          </button>
+          <button id="btn-view-slides" onclick="switchMainView('slides')" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="presentation" class="w-3.5 h-3.5"></i>
+              <span class="hidden md:inline">Pitch Deck</span>
+            </span>
+          </button>
+          <button id="btn-view-diagnostic" onclick="switchMainView('diagnostic')" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
+              <span>Autodiagnóstico</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Action CTA -->
+        <a href="#contacto-modal" onclick="openContactModal()" class="hidden lg:flex items-center space-x-2 bg-gradient-to-r from-brand-orange to-brand-orange-light hover:brightness-110 text-white px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition shadow-lg shadow-brand-orange/20">
+          <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+          <span>Conversemos</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- HERO BANNER (VISIBLE IN DOSSIER & DIAGNOSTIC MODES) -->
+  <!-- ========================================================================= -->
+  <section id="hero-banner" class="relative overflow-hidden pt-12 pb-16 border-b border-brand-border bg-gradient-to-b from-brand-surface via-brand-navy to-brand-navy">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-orange/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-20 -left-40 w-96 h-96 bg-brand-teal/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center space-x-2 bg-brand-orange/10 border border-brand-orange/30 px-3 py-1 rounded-full text-brand-orange text-xs font-bold mb-4 uppercase tracking-wider">
+          <span>Caso de Estudio & Transformación 2026</span>
+          <span class="w-1 h-1 rounded-full bg-brand-orange"></span>
+          <span>Zona Virtual S.A.</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-display font-bold tracking-tight text-white leading-tight mb-4">
+          La IA no llega a reemplazar su empresa.<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-400">Llega a rediseñar cómo trabaja.</span>
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6 font-normal">
+          Un análisis estratégico, diagnóstico operativo y plan de acompañamiento integral construido para potenciar la infraestructura, el talento humano y los 25 años de confianza de <strong>Zonapagos</strong> en Colombia.
+        </p>
+
+        <!-- Quick Metrics Highlights -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+          <div class="bg-brand-card/80 border border-brand-border p-3.5 rounded-xl">
+            <span class="text-xs text-brand-muted block font-medium">Trayectoria</span>
+            <span class="text-xl font-bold font-display text-white">25+ Años</span>
+            <span class="text-[11px] text-emerald-400 block mt-0.5">Pionero ACH PSE</span>
+          </div>
+          <div class="bg-brand-card/80 border border-brand-border p-3.5 rounded-xl">
+            <span class="text-xs text-brand-muted block font-medium">Seguridad</span>
+            <span class="text-xl font-bold font-display text-white">PCI DSS 4.0</span>
+            <span class="text-[11px] text-emerald-400 block mt-0.5">Nivel 1 Certificado</span>
+          </div>
+          <div class="bg-brand-card/80 border border-brand-border p-3.5 rounded-xl">
+            <span class="text-xs text-brand-muted block font-medium">Capilaridad</span>
+            <span class="text-xl font-bold font-display text-white">+60k Puntos</span>
+            <span class="text-[11px] text-brand-teal block mt-0.5">Ecosistema Phygital</span>
+          </div>
+          <div class="bg-brand-card/80 border border-brand-border p-3.5 rounded-xl">
+            <span class="text-xs text-brand-muted block font-medium">Potencial IA</span>
+            <span class="text-xl font-bold font-display text-brand-orange">-70% Tiempo</span>
+            <span class="text-[11px] text-amber-300 block mt-0.5">En Soporte e Integración</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: DOSSIER COMPLETO (PESTAÑAS MODULARES) -->
+  <!-- ========================================================================= -->
+  <main id="view-tabs" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full">
+    
+    <!-- Tab Navigation Bar -->
+    <div class="flex items-center space-x-2 border-b border-brand-border pb-4 mb-8 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('tab-empresa')" id="nav-tab-empresa" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-brand-surface border border-brand-border text-brand-orange border-brand-orange/40">
+        <i data-lucide="building-2" class="w-4 h-4"></i>
+        <span>1. Radiografía Zona Virtual</span>
+      </button>
+      <button onclick="switchTab('tab-areas')" id="nav-tab-areas" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-brand-surface border border-brand-border text-slate-300 hover:text-white">
+        <i data-lucide="cpu" class="w-4 h-4"></i>
+        <span>2. Áreas Clave de IA</span>
+      </button>
+      <button onclick="switchTab('tab-diagnostico')" id="nav-tab-diagnostico" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-brand-surface border border-brand-border text-slate-300 hover:text-white">
+        <i data-lucide="compass" class="w-4 h-4"></i>
+        <span>3. Diagnóstico: Interno vs Externo</span>
+      </button>
+      <button onclick="switchTab('tab-planeacion')" id="nav-tab-planeacion" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-brand-surface border border-brand-border text-slate-300 hover:text-white">
+        <i data-lucide="calendar-range" class="w-4 h-4"></i>
+        <span>4. Sistema de Planeación</span>
+      </button>
+      <button onclick="switchTab('tab-roi')" id="nav-tab-roi" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center space-x-2 bg-brand-surface border border-brand-border text-slate-300 hover:text-white">
+        <i data-lucide="calculator" class="w-4 h-4"></i>
+        <span>5. Calculadora de Impacto</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: RADIOGRAFÍA DE LA EMPRESA -->
+    <div id="tab-empresa" class="tab-content space-y-8">
+      
+      <!-- Top Overview Card -->
+      <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-brand-border pb-6 mb-6">
+          <div>
+            <div class="flex items-center space-x-3 mb-2">
+              <span class="text-xs font-bold text-brand-orange bg-brand-orange/10 px-3 py-1 rounded-full uppercase">Perfil Corporativo</span>
+              <span class="text-xs text-brand-muted">Fundada en 1998 · Medellín, Colombia</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold font-display text-white">Zona Virtual S.A. & Zonapagos</h2>
+            <p class="text-slate-400 text-sm mt-1">Plataforma de recaudo multicanal y pasarela phygital de pagos B2B, B2G y B2B2C.</p>
+          </div>
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+              <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-xs text-brand-muted block font-medium">Cumplimiento Clave</span>
+              <span class="text-sm font-bold text-white">PCI DSS Nivel 1 v4.0</span>
+              <span class="text-[11px] text-slate-400 block">Protocolo 3DS + Antifraude Zonasegura</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Columns Details -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="layers" class="w-4 h-4 text-brand-orange"></i>
+              <span>Propuesta Phygital Única</span>
+            </h3>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Conecta más de 50 medios de pago digitales (PSE, tarjetas de crédito y débito, billeteras Nequi/Daviplata, Bre-B) con una red física de más de 60.000 corresponsales y taquillas (Efecty, Gana, SuperGiros, SuRed).
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="package" class="w-4 h-4 text-brand-teal"></i>
+              <span>Portafolio de Soluciones</span>
+            </h3>
+            <ul class="text-xs text-slate-400 space-y-1.5">
+              <li><strong class="text-slate-200">Zonarecaudo:</strong> Cobros masivos desde bases de cartera vía API/Webservice o plano.</li>
+              <li><strong class="text-slate-200">Zonapay:</strong> Pasarela de pago para checkout en tiendas e-commerce multimoneda.</li>
+              <li><strong class="text-slate-200">Zonaexpress:</strong> Formularios ágiles de consignación y taquillas virtuales directas.</li>
+              <li><strong class="text-slate-200">Complementos:</strong> Bre-B, QR-Link, Link de Cobro, Pagos Mixtos, Tokenización.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
+              <span>Sectores Especializados</span>
+            </h3>
+            <ul class="text-xs text-slate-400 space-y-1.5">
+              <li><strong class="text-slate-200">Sector Público / GovTech:</strong> Impuestos (predial, ICA), multas, tasas municipales.</li>
+              <li><strong class="text-slate-200">Sector Educativo:</strong> Matrículas y pensiones escolares/universitarias.</li>
+              <li><strong class="text-slate-200">Servicios Públicos:</strong> Acueducto, energía, gas con picos masivos de pago.</li>
+              <li><strong class="text-slate-200">Cooperativas & Solidario:</strong> Aportes y créditos asociativos.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operational Flowchart -->
+      <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
+        <h3 class="text-lg font-bold font-display text-white mb-4 flex items-center space-x-2">
+          <i data-lucide="git-branch" class="w-5 h-5 text-brand-orange"></i>
+          <span>Cadena de Valor Transaccional y Puntos de Fricción</span>
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">Mapeo del ciclo de vida del cliente y la transacción en Zonapagos, señalando los cuellos de botella operativos donde la IA genera mayor retorno:</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <!-- Step 1 -->
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border relative">
+            <div class="text-[10px] font-bold text-brand-orange uppercase mb-1">Paso 1</div>
+            <h4 class="text-sm font-bold text-white mb-2">Comercial & Licitación</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Ventas consultivas B2B y pliegos de contratación estatal (SECOP).</p>
+            <div class="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-[10px] text-rose-300">
+              <strong>Fricción:</strong> 40+ horas manuales leyendo pliegos de 300 páginas.
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border relative">
+            <div class="text-[10px] font-bold text-brand-orange uppercase mb-1">Paso 2</div>
+            <h4 class="text-sm font-bold text-white mb-2">Onboarding & Integración</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Conexión de APIs, webservices, certificados y pruebas en Sandbox.</p>
+            <div class="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-[10px] text-rose-300">
+              <strong>Fricción:</strong> Desarrolladores de clientes bloqueados por dudas de parámetros.
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border relative">
+            <div class="text-[10px] font-bold text-brand-orange uppercase mb-1">Paso 3</div>
+            <h4 class="text-sm font-bold text-white mb-2">Procesamiento Core</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Enrutamiento transaccional a redes bancarias, ACH y adquirentes.</p>
+            <div class="p-2 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-300">
+              <strong>Fortaleza:</strong> Motor PCI DSS 4.0 altamente confiable.
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border relative">
+            <div class="text-[10px] font-bold text-brand-orange uppercase mb-1">Paso 4</div>
+            <h4 class="text-sm font-bold text-white mb-2">Conciliación 360°</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Cruce de transacciones vs. extractos bancarios vs. ERP del comercio.</p>
+            <div class="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-[10px] text-rose-300">
+              <strong>Fricción:</strong> Transacciones huérfanas y descalces revisados en Excel.
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="bg-brand-surface p-4 rounded-xl border border-brand-border relative">
+            <div class="text-[10px] font-bold text-brand-orange uppercase mb-1">Paso 5</div>
+            <h4 class="text-sm font-bold text-white mb-2">Soporte & Retención</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed mb-3">Resolución de reclamos de pagadores y soporte continuo al comercio.</p>
+            <div class="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-[10px] text-rose-300">
+              <strong>Fricción:</strong> Colapso en picos de vencimiento tributario/escolar.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ÁREAS CLAVE DE IMPLEMENTACIÓN CON IMPULSO IA -->
+    <div id="tab-areas" class="tab-content hidden space-y-8">
+      
+      <!-- Philosophy Banner -->
+      <div class="bg-gradient-to-r from-brand-card via-brand-surface to-brand-card border border-brand-border rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <span class="text-xs font-bold text-brand-orange uppercase tracking-wider block mb-1">Metodología Impulso IA</span>
+          <h3 class="text-xl font-bold font-display text-white">IA · Procesos · Personas</h3>
+          <p class="text-xs text-slate-400 mt-1 max-w-2xl">
+            No vendemos software de estantería. Trabajamos sobre los procesos reales de Zona Virtual para transferir capacidad instalada en tres zonas estratégicas y mediante tres caminos combinables (Capacitar, Acompañar, Automatizar).
+          </p>
+        </div>
+        <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-xl border border-brand-border text-xs">
+          <span class="px-2.5 py-1 rounded-md bg-brand-orange/20 text-brand-orange font-bold">Capacitar</span>
+          <span class="text-slate-500">+</span>
+          <span class="px-2.5 py-1 rounded-md bg-brand-teal/20 text-brand-teal font-bold">Acompañar</span>
+          <span class="text-slate-500">+</span>
+          <span class="px-2.5 py-1 rounded-md bg-amber-400/20 text-amber-300 font-bold">Automatizar</span>
+        </div>
+      </div>
+
+      <!-- The 3 Zones Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- ZONE 1: PROCESOS -->
+        <div class="bg-brand-card border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 transition">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange mb-4">
+              <i data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+            <div class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-orange/15 text-brand-orange mb-2 uppercase">Zona de Procesos</div>
+            <h3 class="text-lg font-bold font-display text-white mb-2">Operaciones, Ingeniería & Soporte Transaccional</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              El corazón operativo donde se procesan los pagos y se resuelven los problemas técnicos de clientes y pagadores.
+            </p>
+
+            <div class="space-y-4">
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>1. Zonapagos DevBot (Copiloto API)</span>
+                  <span class="text-[9px] bg-brand-orange/20 text-brand-orange px-1.5 py-0.5 rounded">RAG</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Asistente IA entrenado en documentación técnica que analiza código de comercios (PHP, Python, Java, Node), detecta errores de sintaxis y resuelve dudas de webhooks 24/7.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>2. Auto-Conciliación de Anomalías</span>
+                  <span class="text-[9px] bg-brand-teal/20 text-brand-teal px-1.5 py-0.5 rounded">Agente</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Detección en tiempo real de transacciones huérfanas (descalces entre banco y pasarela), sugiriendo o aplicando ajustes automáticos sin hojas de Excel manuales.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>3. Agente Resolutivo para Pagadores</span>
+                  <span class="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded">Chat IA</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Atención en lenguaje natural en WhatsApp/Web. Valida estados de pago con token seguro, reenvía comprobantes y contiene el 80% del volumen en fechas pico.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-brand-border text-[11px] text-brand-orange font-semibold flex items-center justify-between">
+            <span>Impacto: -70% tiempo soporte L2</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- ZONE 2: ADMINISTRATIVA -->
+        <div class="bg-brand-card border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-teal/40 transition">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-brand-teal/10 flex items-center justify-center text-brand-teal mb-4">
+              <i data-lucide="briefcase" class="w-6 h-6"></i>
+            </div>
+            <div class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/15 text-brand-teal mb-2 uppercase">Zona Administrativa</div>
+            <h3 class="text-lg font-bold font-display text-white mb-2">Finanzas, Legal, Compliance & Personas</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              El blindaje institucional, la gestión contractual y la formación de talento con estándares bancarios.
+            </p>
+
+            <div class="space-y-4">
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>1. Extractor de Licitaciones GovTech</span>
+                  <span class="text-[9px] bg-brand-teal/20 text-brand-teal px-1.5 py-0.5 rounded">NLP</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Agente que analiza pliegos de SECOP en minutos, extrae matrices de cumplimiento técnico/financiero y pre-redacta propuestas competitivas para alcaldías.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>2. Monitor de Compliance PCI DSS 4.0</span>
+                  <span class="text-[9px] bg-brand-orange/20 text-brand-orange px-1.5 py-0.5 rounded">Auditoría</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Copiloto de evidencias normativas y circulares de la SuperFinanciera, garantizando trazabilidad documental sin estrés de auditoría.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>3. Second Brain & Campus Interno</span>
+                  <span class="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded">Formación</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Centralización del conocimiento de 25 años y programa de capacitación intensivo por niveles para toda la plantilla de Zona Virtual.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-brand-border text-[11px] text-brand-teal font-semibold flex items-center justify-between">
+            <span>Impacto: +3x velocidad licitatoria</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- ZONE 3: MARKETING -->
+        <div class="bg-brand-card border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-amber-400/40 transition">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-amber-400/10 flex items-center justify-center text-amber-300 mb-4">
+              <i data-lucide="trending-up" class="w-6 h-6"></i>
+            </div>
+            <div class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/15 text-amber-300 mb-2 uppercase">Zona de Marketing</div>
+            <h3 class="text-lg font-bold font-display text-white mb-2">Adquisición B2B, Growth & Retención</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              El motor de ventas y reputación para posicionar la autoridad de Zonapagos y defender la cuota de mercado.
+            </p>
+
+            <div class="space-y-4">
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>1. Prospección B2B Inteligente</span>
+                  <span class="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded">Outbound</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Monitoreo de calendarios de colegios, municipios y cooperativas para redactar secuencias de contacto hiperpersonalizadas destacando la ventaja phygital.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>2. Fábrica Editorial FinTech</span>
+                  <span class="text-[9px] bg-brand-orange/20 text-brand-orange px-1.5 py-0.5 rounded">Contenido</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Creación periódica de artículos y whitepapers de autoridad sobre Bre-B, 3DS, pagos mixtos y optimización de tesorería para directores financieros.
+                </p>
+              </div>
+
+              <div class="p-3.5 bg-brand-surface rounded-xl border border-brand-border">
+                <h4 class="text-xs font-bold text-white flex items-center justify-between mb-1">
+                  <span>3. Score Predictivo de Churn</span>
+                  <span class="text-[9px] bg-brand-teal/20 text-brand-teal px-1.5 py-0.5 rounded">Analítica</span>
+                </h4>
+                <p class="text-[11px] text-slate-400">
+                  Detección temprana de caídas estadísticas en volumen transaccional de recaudadores clave, alertando al equipo comercial antes de la pérdida de cuenta.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-brand-border text-[11px] text-amber-300 font-semibold flex items-center justify-between">
+            <span>Impacto: Prospección activa 24/7</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: DIAGNÓSTICO ESTRATÉGICO (DOBLE ESPEJO & FODA) -->
+    <div id="tab-diagnostico" class="tab-content hidden space-y-8">
+      
+      <!-- Introduction to the Double Mirror -->
+      <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
+        <h3 class="text-2xl font-bold font-display text-white mb-2">El Doble Espejo: Reflexión Interna vs. Externa</h3>
+        <p class="text-slate-400 text-sm max-w-3xl mb-8">
+          La transformación no comienza comprando licencias; comienza haciéndose las preguntas difíciles. Este cuadro confronta la realidad que experimenta el equipo interno de Zona Virtual contra la percepción de los clientes en el mercado.
+        </p>
+
+        <!-- Comparative Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-brand-border text-brand-muted uppercase text-[11px] tracking-wider">
+                <th class="py-3 px-4 bg-brand-surface rounded-l-lg">Dimensión Crítica</th>
+                <th class="py-3 px-4 bg-brand-surface">La Pregunta Incómoda (Mirada Interna)</th>
+                <th class="py-3 px-4 bg-brand-surface">La Percepción del Cliente (Mirada Externa)</th>
+                <th class="py-3 px-4 bg-brand-surface rounded-r-lg">La Solución con Impulso IA</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-border">
+              <tr>
+                <td class="py-4 px-4 font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="code" class="w-4 h-4 text-brand-orange"></i>
+                  <span>Soporte a Desarrolladores</span>
+                </td>
+                <td class="py-4 px-4 text-slate-300">
+                  "¿Cuántas horas a la semana pasa ingeniería repitiendo cómo autenticar el webhook o interpretar un error 400?"
+                </td>
+                <td class="py-4 px-4 text-slate-400">
+                  "El equipo es formal, pero si mis programadores se traban, tardamos días en recibir respuesta técnica precisa."
+                </td>
+                <td class="py-4 px-4 text-brand-orange font-medium">
+                  Copiloto RAG 24/7 que analiza código y entrega snippets corregidos al instante.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="file-spreadsheet" class="w-4 h-4 text-brand-teal"></i>
+                  <span>Conciliación Financiera</span>
+                </td>
+                <td class="py-4 px-4 text-slate-300">
+                  "¿Qué pasa si el analista experto en las tablas de Excel de compensación bancaria se incapacita o renuncia?"
+                </td>
+                <td class="py-4 px-4 text-slate-400">
+                  "A veces tengo pagos que no se reflejan a tiempo en el ERP y el reporte de dispersión requiere ajustes manuales."
+                </td>
+                <td class="py-4 px-4 text-brand-teal font-medium">
+                  Agente predictivo de anomalías y resolución automática de transacciones huérfanas.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="file-check" class="w-4 h-4 text-amber-400"></i>
+                  <span>Licitaciones Públicas</span>
+                </td>
+                <td class="py-4 px-4 text-slate-300">
+                  "¿Cuántos pliegos de alcaldías o gobernaciones dejamos pasar porque no dimos abasto para leer 400 páginas?"
+                </td>
+                <td class="py-4 px-4 text-slate-400">
+                  "Zonapagos tiene trayectoria, pero a veces competidores más jóvenes presentan propuestas más vistosas y rápidas."
+                </td>
+                <td class="py-4 px-4 text-amber-300 font-medium">
+                  Pipeline IA de lectura de pliegos SECOP y generación acelerada de propuestas técnicas.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="message-square" class="w-4 h-4 text-sky-400"></i>
+                  <span>Atención en Fechas Pico</span>
+                </td>
+                <td class="py-4 px-4 text-slate-300">
+                  "¿Por qué nuestros canales colapsan en fechas de vencimiento de predial con usuarios preguntando '¿pasó mi pago?'?"
+                </td>
+                <td class="py-4 px-4 text-slate-400">
+                  "Pagué mi impuesto, se me debitó la plata pero la página se cayó. Nadie me contesta en la línea de soporte."
+                </td>
+                <td class="py-4 px-4 text-sky-300 font-medium">
+                  Agente conversacional resolutivo con consulta de base de datos cifrada y respuesta inmediata.
+                </td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="graduation-cap" class="w-4 h-4 text-violet-400"></i>
+                  <span>Cultura y Adopción de IA</span>
+                </td>
+                <td class="py-4 px-4 text-slate-300">
+                  "¿Nuestro equipo tiene protocolos seguros de IA, o cada quien usa ChatGPT gratuito con riesgo de exponer datos de pagos?"
+                </td>
+                <td class="py-4 px-4 text-slate-400">
+                  "Esperamos que nuestro proveedor tecnológico líder esté a la vanguardia de las mejores prácticas de IA segura."
+                </td>
+                <td class="py-4 px-4 text-violet-300 font-medium">
+                  Capacitación por roles con políticas alineadas a PCI DSS 4.0 y capacidad instalada real.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SWOT / FODA Analysis Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Fortalezas -->
+        <div class="bg-brand-card border border-emerald-500/30 rounded-2xl p-6">
+          <div class="flex items-center space-x-2 text-emerald-400 font-display font-bold text-base mb-4">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <span>Fortalezas Estratégicas (Activos Clave)</span>
+          </div>
+          <ul class="text-xs text-slate-300 space-y-2.5">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>25+ años de trayectoria y credibilidad institucional:</strong> Primer operador certificado por ACH Colombia en PSE.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>Certificación PCI DSS Nivel 1 v4.0:</strong> Máxima garantía de seguridad y gestión antifraude con 3DS.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>Red Phygital inigualable:</strong> Más de 50 medios digitales combinados con 60k puntos de corresponsalía física.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>Pioneros en Bre-B:</strong> Integración activa con el sistema de pagos inmediatos del Banco de la República.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Debilidades -->
+        <div class="bg-brand-card border border-rose-500/30 rounded-2xl p-6">
+          <div class="flex items-center space-x-2 text-rose-400 font-display font-bold text-base mb-4">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <span>Debilidades Operativas (Áreas de Intervención)</span>
+          </div>
+          <ul class="text-xs text-slate-300 space-y-2.5">
+            <li class="flex items-start space-x-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><strong>Alta fricción en soporte de integración:</strong> Desarrolladores B2B dependen de correos y tickets manuales.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><strong>Conciliación dependiente de mano humana:</strong> Cuadre de transacciones huérfanas en hojas de cálculo.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><strong>Generación de contenidos y marketing conservador:</strong> Poca cadencia de autoridad digital frente a nuevos jugadores.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><strong>Ausencia de gobernanza y programas formales de IA:</strong> Uso fragmentado de herramientas sin capacidad instalada.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Oportunidades -->
+        <div class="bg-brand-card border border-brand-teal/30 rounded-2xl p-6">
+          <div class="flex items-center space-x-2 text-brand-teal font-display font-bold text-base mb-4">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <span>Oportunidades con Impulso IA</span>
+          </div>
+          <ul class="text-xs text-slate-300 space-y-2.5">
+            <li class="flex items-start space-x-2">
+              <span class="text-brand-teal font-bold">•</span>
+              <span><strong>Aceleración de contratos GovTech:</strong> Triplicar propuestas presentadas a alcaldías mediante asistentes IA.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-brand-teal font-bold">•</span>
+              <span><strong>Liderazgo de pensamiento en Bre-B:</strong> Posicionar a Zonapagos como el referente educativo del recaudo interoperable.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-brand-teal font-bold">•</span>
+              <span><strong>Reducción de costos operativos:</strong> Liberar hasta 40% de tiempo en ingeniería y soporte para crear nuevos productos.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-brand-teal font-bold">•</span>
+              <span><strong>Experiencia de Desarrollador de Clase Mundial:</strong> Convertir la API de Zonapagos en la más fácil de integrar de Colombia.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Amenazas -->
+        <div class="bg-brand-card border border-amber-400/30 rounded-2xl p-6">
+          <div class="flex items-center space-x-2 text-amber-400 font-display font-bold text-base mb-4">
+            <i data-lucide="flame" class="w-5 h-5"></i>
+            <span>Amenazas del Mercado FinTech</span>
+          </div>
+          <ul class="text-xs text-slate-300 space-y-2.5">
+            <li class="flex items-start space-x-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>Neopasarelas con onboarding automatizado:</strong> Competidores que activan comercios en 5 minutos sin fricción humana.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>Guerra de tarifas y subsidios:</strong> Bancos tradicionales lanzando pasarelas con comisiones reducidas.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>Fuga silenciosa de transacciones (Churn):</strong> Clientes que migran su volumen sin avisar por falta de seguimiento ágil.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>Competidores con IA nativa:</strong> Empresas que operan con la mitad de costo fijo gracias a automatizaciones inteligentes.</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 4: SISTEMA DE PLANEACIÓN Y HOJA DE RUTA -->
+    <div id="tab-planeacion" class="tab-content hidden space-y-8">
+      
+      <!-- Roadmap Overview -->
+      <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
+        <div class="max-w-3xl mb-8">
+          <span class="text-xs font-bold text-brand-orange uppercase tracking-wider block mb-1">Acompañamiento Estructurado</span>
+          <h3 class="text-2xl font-bold font-display text-white mb-2">Sistema de Planeación Progresiva con Impulso IA</h3>
+          <p class="text-slate-400 text-sm">
+            Diseñamos un plan de trabajo pragmático de 3 fases que garantiza victorias rápidas desde el primer mes y transfiere capacidad instalada permanente al equipo interno de Zona Virtual.
+          </p>
+        </div>
+
+        <!-- Timeline Cards -->
+        <div class="relative border-l-2 border-brand-border ml-4 sm:ml-6 space-y-10 pl-6 sm:pl-8">
+          
+          <!-- Phase 1 -->
+          <div class="relative">
+            <div class="absolute -left-[35px] sm:-left-[43px] top-0 w-8 h-8 rounded-full bg-brand-orange flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-brand-orange/40">
+              1
+            </div>
+            <div class="bg-brand-surface p-6 rounded-2xl border border-brand-border">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold text-brand-orange uppercase">Fase 1 · Semanas 1 a 4</span>
+                <span class="text-xs text-brand-muted bg-brand-navy px-3 py-1 rounded-full border border-brand-border">Quick Wins & Nivelación</span>
+              </div>
+              <h4 class="text-lg font-bold font-display text-white mb-3">Diagnóstico Profundo, Gobernanza y Asistente DevBot V1</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Iniciamos con el levantamiento de procesos reales, estableciendo políticas de uso seguro de IA alineadas con PCI DSS v4.0 y entregando una solución inmediata para el soporte técnico.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                  <span>Capacitación base al equipo operativo en herramientas de IA.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                  <span>Prototipo funcional del Zonapagos DevBot RAG para documentación.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                  <span>Matriz de seguridad de datos y protocolos contra fuga de información.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                  <span>Definición de KPIs de impacto para soporte y conciliación.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="relative">
+            <div class="absolute -left-[35px] sm:-left-[43px] top-0 w-8 h-8 rounded-full bg-brand-teal flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-brand-teal/40">
+              2
+            </div>
+            <div class="bg-brand-surface p-6 rounded-2xl border border-brand-border">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold text-brand-teal uppercase">Fase 2 · Semanas 5 a 12</span>
+                <span class="text-xs text-brand-muted bg-brand-navy px-3 py-1 rounded-full border border-brand-border">Product Management & Agentes</span>
+              </div>
+              <h4 class="text-lg font-bold font-display text-white mb-3">Automatización Core: Licitaciones GovTech y DevBot en Producción</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Pasamos de la teoría a la construcción técnica conjunta. Integramos los agentes en la rutina diaria y coordinamos con ingeniería la solución de necesidades de negocio.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-brand-teal flex-shrink-0"></i>
+                  <span>Zonapagos DevBot publicado en el portal de desarrolladores.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-brand-teal flex-shrink-0"></i>
+                  <span>Pipeline asistido de extracción de pliegos y redacción de licitaciones.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-brand-teal flex-shrink-0"></i>
+                  <span>Flujo de contenido editorial y thought leadership FinTech (Bre-B/3DS).</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-brand-teal flex-shrink-0"></i>
+                  <span>Acompañamiento intensivo semanal con líderes de cada zona.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 3 -->
+          <div class="relative">
+            <div class="absolute -left-[35px] sm:-left-[43px] top-0 w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center text-brand-navy font-bold text-xs shadow-lg shadow-amber-400/40">
+              3
+            </div>
+            <div class="bg-brand-surface p-6 rounded-2xl border border-brand-border">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold text-amber-300 uppercase">Fase 3 · Semanas 13 a 20+</span>
+                <span class="text-xs text-brand-muted bg-brand-navy px-3 py-1 rounded-full border border-brand-border">Escalamiento & Capacidad Instalada</span>
+              </div>
+              <h4 class="text-lg font-bold font-display text-white mb-3">Conciliación Inteligente, Agente Resolutivo y Autonomía Total</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Cerramos el ciclo con las automatizaciones financieras complejas, liberando al equipo para liderar y garantizando que Zona Virtual mantenga y mejore sus sistemas de IA de forma autónoma.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 flex-shrink-0"></i>
+                  <span>Agente IA de auto-conciliación 360° para transacciones huérfanas.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 flex-shrink-0"></i>
+                  <span>Agente multicanal de soporte a pagadores para absorción de picos.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 flex-shrink-0"></i>
+                  <span>Score predictivo de salud de cuenta y detección de churn B2B.</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-brand-navy p-3 rounded-lg border border-brand-border">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-amber-300 flex-shrink-0"></i>
+                  <span>Manuales, documentación y transferencia total de capacidad instalada.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 5: CALCULADORA DE IMPACTO Y ROI -->
+    <div id="tab-roi" class="tab-content hidden space-y-8">
+      <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8">
+        <div class="max-w-3xl mb-8">
+          <span class="text-xs font-bold text-brand-orange uppercase tracking-wider block mb-1">Simulador Financiero & Operativo</span>
+          <h3 class="text-2xl font-bold font-display text-white mb-2">Calculadora de Horas Recuperadas y Retorno de Inversión</h3>
+          <p class="text-slate-400 text-sm">
+            Ajuste las variables operativas actuales de su equipo para calcular el estimado de horas-hombre liberadas al año y el impacto en eficiencia gracias a los modelos de Impulso IA:
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Controls Panel (Left) -->
+          <div class="lg:col-span-6 space-y-6 bg-brand-surface p-6 rounded-2xl border border-brand-border">
+            
+            <!-- Slider 1 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-white">Ingenieros dedicados a soporte de integración:</label>
+                <span id="val-devs" class="text-sm font-bold text-brand-orange">4 personas</span>
+              </div>
+              <input type="range" id="slider-devs" min="1" max="15" value="4" oninput="calculateROI()" class="w-full accent-brand-orange cursor-pointer">
+              <span class="text-[11px] text-brand-muted block mt-1">Horas estimadas en tickets repetitivos de API: 15h / semana por persona.</span>
+            </div>
+
+            <!-- Slider 2 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-white">Horas semanales del equipo en conciliación manual:</label>
+                <span id="val-reconcile" class="text-sm font-bold text-brand-teal">25 horas/sem</span>
+              </div>
+              <input type="range" id="slider-reconcile" min="5" max="80" value="25" oninput="calculateROI()" class="w-full accent-brand-teal cursor-pointer">
+              <span class="text-[11px] text-brand-muted block mt-1">Tiempo invertido en cuadre de lotes, descalces de bancos y excepciones.</span>
+            </div>
+
+            <!-- Slider 3 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-white">Licitaciones / propuestas GovTech al mes:</label>
+                <span id="val-rfp" class="text-sm font-bold text-amber-300">5 propuestas</span>
+              </div>
+              <input type="range" id="slider-rfp" min="1" max="20" value="5" oninput="calculateROI()" class="w-full accent-amber-300 cursor-pointer">
+              <span class="text-[11px] text-brand-muted block mt-1">Tiempo de lectura de pliegos y armado de propuesta: ~30h por licitación.</span>
+            </div>
+
+            <!-- Slider 4 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-white">Costo promedio hora-hombre (COP):</label>
+                <span id="val-cost" class="text-sm font-bold text-white">$ 45.000 COP</span>
+              </div>
+              <input type="range" id="slider-cost" min="25000" max="90000" step="5000" value="45000" oninput="calculateROI()" class="w-full accent-slate-400 cursor-pointer">
+              <span class="text-[11px] text-brand-muted block mt-1">Promedio ponderado entre analistas, soporte e ingenieros.</span>
+            </div>
+
+          </div>
+
+          <!-- Results Panel (Right) -->
+          <div class="lg:col-span-6 space-y-6">
+            
+            <div class="bg-gradient-to-br from-brand-card to-brand-surface p-6 rounded-2xl border border-brand-border">
+              <h4 class="text-xs font-bold text-brand-muted uppercase tracking-wider mb-4">Impacto Anual Estimado</h4>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div class="bg-brand-navy p-4 rounded-xl border border-brand-border">
+                  <span class="text-xs text-brand-muted block">Horas Ahorradas / Año</span>
+                  <span id="res-hours" class="text-3xl font-display font-bold text-brand-orange mt-1">3.880 h</span>
+                  <span class="text-[11px] text-emerald-400 block mt-1">Capacidad recuperada</span>
+                </div>
+                <div class="bg-brand-navy p-4 rounded-xl border border-brand-border">
+                  <span class="text-xs text-brand-muted block">Ahorro Económico Estimado</span>
+                  <span id="res-money" class="text-2xl sm:text-3xl font-display font-bold text-emerald-400 mt-1">$ 174.6M COP</span>
+                  <span class="text-[11px] text-slate-400 block mt-1">Anual en costo operativo</span>
+                </div>
+              </div>
+
+              <!-- Extra Multiplier Highlights -->
+              <div class="space-y-3 pt-2 text-xs">
+                <div class="flex items-center justify-between p-3 rounded-lg bg-brand-navy border border-brand-border">
+                  <span class="text-slate-300">Aceleración en tiempo de integración:</span>
+                  <span class="font-bold text-brand-orange">De 3 semanas a 2 días</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-brand-navy border border-brand-border">
+                  <span class="text-slate-300">Contención de consultas en fechas pico:</span>
+                  <span class="font-bold text-brand-teal">Hasta 80% automatizado</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-brand-navy border border-brand-border">
+                  <span class="text-slate-300">Capacidad de presentación a licitaciones:</span>
+                  <span class="font-bold text-amber-300">+250% más propuestas</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Call to action inside calculator -->
+            <div class="p-4 rounded-xl bg-brand-orange/10 border border-brand-orange/30 text-center">
+              <p class="text-xs text-slate-300 mb-2">
+                Este ahorro no implica despedir talento: significa <strong>reubicar a sus ingenieros y analistas en crear nuevos productos transaccionales y hacer crecer el negocio</strong>.
+              </p>
+              <button onclick="openContactModal()" class="text-xs font-bold text-brand-orange hover:underline">
+                Agendar sesión de levantamiento de procesos →
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: PITCH DECK PRESENTATION (MODO DIAPOSITIVAS EJECUTIVAS) -->
+  <!-- ========================================================================= -->
+  <section id="view-slides" class="hidden flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col justify-between">
+    
+    <!-- Presentation Toolbar -->
+    <div class="flex items-center justify-between mb-4 bg-brand-surface p-3 rounded-2xl border border-brand-border">
+      <div class="flex items-center space-x-3">
+        <span class="text-xs font-bold text-brand-orange uppercase">Pitch Deck Ejecutivo</span>
+        <span class="text-xs text-brand-muted">|</span>
+        <span id="slide-indicator" class="text-xs font-semibold text-white">Diapositiva 1 de 7</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="prevSlide()" class="p-2 rounded-lg bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <button onclick="nextSlide()" class="p-2 rounded-lg bg-brand-navy hover:bg-brand-border text-slate-300 hover:text-white transition">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- SLIDE CONTAINER -->
+    <div class="bg-brand-card border border-brand-border rounded-3xl p-8 sm:p-12 min-h-[520px] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-orange/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- SLIDE 1: PORTADA -->
+      <div id="slide-1" class="slide-item space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-brand-orange/15 px-3 py-1 rounded-full text-brand-orange text-xs font-bold w-fit uppercase">
+          Propuesta Estratégica de Acompañamiento
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white leading-tight">
+          La IA no llega a reemplazar su empresa.<br>
+          <span class="text-brand-orange">Llega a rediseñar cómo trabaja.</span>
+        </h2>
+        <p class="text-slate-300 text-lg max-w-2xl leading-relaxed">
+          Cómo <strong>Zona Virtual y Zonapagos</strong> pueden transformar su operación interna, reducir costos de soporte y acelerar su crecimiento B2B manteniendo intacta su seguridad PCI DSS v4.0.
+        </p>
+        <div class="flex items-center space-x-6 pt-4 text-xs text-brand-muted">
+          <span>Presentado por: <strong>Martín Echavarría · Impulso IA</strong></span>
+          <span>·</span>
+          <span>Medellín, Colombia · 2026</span>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: RADIOGRAFÍA ZONAPAGOS -->
+      <div id="slide-2" class="slide-item hidden space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-brand-teal/15 px-3 py-1 rounded-full text-brand-teal text-xs font-bold w-fit uppercase">
+          El Punto de Partida
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-display font-bold text-white">
+          Los Activos Invaluables de Zonapagos
+        </h2>
+        <p class="text-slate-300 text-sm max-w-2xl">
+          Zona Virtual no es una pasarela emergente sin experiencia. Posee ventajas estructurales que ninguna fintech recién nacida puede replicar:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <i data-lucide="shield-check" class="w-8 h-8 text-emerald-400 mb-3"></i>
+            <h4 class="text-base font-bold text-white mb-1">PCI DSS Nivel 1 v4.0</h4>
+            <p class="text-xs text-slate-400">Máxima certificación de seguridad de la industria, motor antifraude Zonasegura y protocolo 3DS.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <i data-lucide="network" class="w-8 h-8 text-brand-teal mb-3"></i>
+            <h4 class="text-base font-bold text-white mb-1">Red Phygital Masiva</h4>
+            <p class="text-xs text-slate-400">+50 medios digitales y +60.000 puntos físicos (Efecty, Gana, SuperGiros) que conectan a la Colombia real.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <i data-lucide="landmark" class="w-8 h-8 text-amber-300 mb-3"></i>
+            <h4 class="text-base font-bold text-white mb-1">Confianza Institucional</h4>
+            <p class="text-xs text-slate-400">Primer recaudador PSE en Colombia. Relaciones consolidadas en GovTech, universidades y servicios públicos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: EL DILEMA Y LOS PUNTOS DE DOLOR -->
+      <div id="slide-3" class="slide-item hidden space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-rose-500/15 px-3 py-1 rounded-full text-rose-400 text-xs font-bold w-fit uppercase">
+          La Realidad del Mercado 2026
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-display font-bold text-white">
+          El Dilema: Solidez Tradicional vs. Fricción Operativa
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+          <div class="bg-brand-surface p-6 rounded-2xl border border-rose-500/30">
+            <h4 class="text-base font-bold text-rose-300 mb-3 flex items-center space-x-2">
+              <i data-lucide="alert-circle" class="w-5 h-5"></i>
+              <span>Cuellos de Botella Internos</span>
+            </h4>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• Desarrolladores B2B tardan semanas en integrar APIs por falta de soporte instantáneo.</li>
+              <li>• Descalces de conciliación (transacciones huérfanas) resueltos a mano en hojas de cálculo.</li>
+              <li>• Cientos de horas invertidas en leer pliegos de licitaciones públicas de 300 páginas.</li>
+              <li>• Picos de reclamos en fechas de vencimiento tributario y matrículas escolares.</li>
+            </ul>
+          </div>
+          <div class="bg-brand-surface p-6 rounded-2xl border border-amber-400/30">
+            <h4 class="text-base font-bold text-amber-300 mb-3 flex items-center space-x-2">
+              <i data-lucide="zap" class="w-5 h-5"></i>
+              <span>La Presión de los Competidores</span>
+            </h4>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• Neopasarelas activan clientes en 5 minutos con experiencia de autoservicio para programadores.</li>
+              <li>• Competidores reducen costos fijos utilizando agentes de IA para soporte nivel 1 y 2.</li>
+              <li>• Estrategias agresivas de captación digital que amenazan la cuota de mercado en colegios y pymes.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: EL MÉTODO IMPULSO IA -->
+      <div id="slide-4" class="slide-item hidden space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-brand-orange/15 px-3 py-1 rounded-full text-brand-orange text-xs font-bold w-fit uppercase">
+          Cómo Funciona Impulso IA
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-display font-bold text-white">
+          No Vendemos Software. Transferimos Capacidad Instalada.
+        </h2>
+        <p class="text-slate-300 text-sm max-w-2xl">
+          El principio de Impulso es claro: <strong>la tecnología debe adaptarse al negocio, no el negocio a la tecnología</strong>. Intervenimos a través de 3 caminos combinables:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <span class="text-brand-orange text-xs font-bold uppercase block mb-1">Camino 01</span>
+            <h4 class="text-base font-bold text-white mb-2">Capacitar</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">Equipos que entienden la IA y la aplican en sus tareas reales diarias, adaptado a roles, edad y habilidad digital.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <span class="text-brand-teal text-xs font-bold uppercase block mb-1">Camino 02</span>
+            <h4 class="text-base font-bold text-white mb-2">Acompañar</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">Trabajamos codo a codo sobre los procesos reales hasta dejar la capacidad instalada para que el equipo continúe solo.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <span class="text-amber-300 text-xs font-bold uppercase block mb-1">Camino 03</span>
+            <h4 class="text-base font-bold text-white mb-2">Automatizar</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">Levantamos el flujo, diseñamos la arquitectura y construimos agentes a la medida exacta de la operación de Zonapagos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: LAS 3 ZONAS DE IMPACTO -->
+      <div id="slide-5" class="slide-item hidden space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-brand-teal/15 px-3 py-1 rounded-full text-brand-teal text-xs font-bold w-fit uppercase">
+          Propuesta de Intervención
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-display font-bold text-white">
+          Tres Zonas Clave para Zonapagos
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-orange/40">
+            <div class="w-8 h-8 rounded-lg bg-brand-orange/15 flex items-center justify-center text-brand-orange mb-3">
+              <i data-lucide="cpu" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-2">Zona de Procesos</h4>
+            <ul class="text-xs text-slate-400 space-y-1.5">
+              <li>• Copiloto RAG para desarrolladores B2B.</li>
+              <li>• Auto-conciliación de descalces.</li>
+              <li>• Chatbot resolutivo para pagadores.</li>
+            </ul>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-teal/40">
+            <div class="w-8 h-8 rounded-lg bg-brand-teal/15 flex items-center justify-center text-brand-teal mb-3">
+              <i data-lucide="briefcase" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-2">Zona Administrativa</h4>
+            <ul class="text-xs text-slate-400 space-y-1.5">
+              <li>• Extractor de pliegos GovTech (SECOP).</li>
+              <li>• Monitor de compliance PCI DSS 4.0.</li>
+              <li>• Second Brain y campus interno de IA.</li>
+            </ul>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-amber-400/40">
+            <div class="w-8 h-8 rounded-lg bg-amber-400/15 flex items-center justify-center text-amber-300 mb-3">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </div>
+            <h4 class="text-sm font-bold text-white mb-2">Zona de Marketing</h4>
+            <ul class="text-xs text-slate-400 space-y-1.5">
+              <li>• Prospección B2B hiperpersonalizada.</li>
+              <li>• Fábrica editorial FinTech (Bre-B/3DS).</li>
+              <li>• Detección predictiva de Churn.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: SISTEMA DE PLANEACIÓN -->
+      <div id="slide-6" class="slide-item hidden space-y-6 flex-1 flex flex-col justify-center">
+        <div class="inline-flex items-center space-x-2 bg-amber-400/15 px-3 py-1 rounded-full text-amber-300 text-xs font-bold w-fit uppercase">
+          Hoja de Ruta 2026
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-display font-bold text-white">
+          Plan de Implementación en 3 Fases
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <div class="text-xs font-bold text-brand-orange uppercase mb-1">Semanas 1 - 4</div>
+            <h4 class="text-sm font-bold text-white mb-2">Fase 1: Quick Wins</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">Diagnóstico de datos, marco ético PCI DSS, capacitación operativa y prototipo de DevBot para integración.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <div class="text-xs font-bold text-brand-teal uppercase mb-1">Semanas 5 - 12</div>
+            <h4 class="text-sm font-bold text-white mb-2">Fase 2: Product Management</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">DevBot en producción, extractor de pliegos licitatorios y fábrica de contenido técnico sobre Bre-B.</p>
+          </div>
+          <div class="bg-brand-surface p-5 rounded-2xl border border-brand-border">
+            <div class="text-xs font-bold text-amber-300 uppercase mb-1">Semanas 13 - 20+</div>
+            <h4 class="text-sm font-bold text-white mb-2">Fase 3: Core & Autonomía</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">Auto-conciliación 360°, agente de soporte para pagadores y entrega definitiva de capacidad instalada.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: CIERRE Y LLAMADO A LA ACCIÓN -->
+      <div id="slide-7" class="slide-item hidden space-y-8 flex-1 flex flex-col justify-center text-center items-center">
+        <div class="inline-flex items-center space-x-2 bg-brand-orange/20 px-4 py-1.5 rounded-full text-brand-orange text-xs font-bold uppercase">
+          El Siguiente Paso
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white max-w-2xl leading-tight">
+          ¿Qué proceso de su empresa vale la pena transformar primero?
+        </h2>
+        <p class="text-slate-300 text-base max-w-xl">
+          Comencemos con un taller de levantamiento de procesos y un Quick Win funcional en las próximas 3 semanas.
+        </p>
+        <div class="bg-brand-surface p-6 rounded-3xl border border-brand-border inline-flex flex-col sm:flex-row items-center gap-6">
+          <div class="text-left">
+            <span class="text-xs text-brand-muted block font-medium">Contacto Directo</span>
+            <span class="text-base font-bold text-white block">Martín Echavarría</span>
+            <span class="text-xs text-brand-orange font-semibold block">+57 316 758 9794 · IMMPULSO.DEV</span>
+          </div>
+          <a href="https://wa.me/573167589794?text=Hola%20Martín,%20estuvimos%20revisando%20el%20diagnóstico%20de%20Impulso%20IA%20para%20Zonapagos" target="_blank" class="bg-brand-orange hover:bg-brand-orange-dark text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-lg shadow-brand-orange/30">
+            Escribir por WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- Slide Navigation Footer -->
+      <div class="flex items-center justify-between border-t border-brand-border pt-6 mt-6">
+        <button onclick="prevSlide()" class="text-xs font-bold text-slate-400 hover:text-white flex items-center space-x-1">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Anterior</span>
+        </button>
+        <div class="flex items-center space-x-1.5" id="slide-dots">
+          <!-- Rendered by JS -->
+        </div>
+        <button onclick="nextSlide()" class="text-xs font-bold text-brand-orange hover:text-brand-orange-light flex items-center space-x-1">
+          <span>Siguiente</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: AUTODIAGNÓSTICO INTERACTIVO EN VIVO -->
+  <!-- ========================================================================= -->
+  <section id="view-diagnostic" class="hidden flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <div class="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-10 mb-8">
+      <div class="max-w-3xl mb-8">
+        <div class="inline-flex items-center space-x-2 bg-brand-teal/15 px-3 py-1 rounded-full text-brand-teal text-xs font-bold uppercase mb-2">
+          Test de Madurez Operativa en IA
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-display font-bold text-white mb-2">
+          Autodiagnóstico Estratégico para Líderes de Zonapagos
+        </h2>
+        <p class="text-slate-400 text-sm">
+          Responda con total honestidad a las 8 preguntas operativas clave. Nuestro sistema calculará en tiempo real el índice de madurez de su empresa, identificará las mayores fugas de eficiencia y generará su plan de acción personalizado.
+        </p>
+      </div>
+
+      <!-- QUESTIONS CONTAINER (RENDERED BY JS) -->
+      <div id="quiz-container" class="space-y-8">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- SUBMIT / CALCULATE BUTTON -->
+      <div class="mt-10 pt-6 border-t border-brand-border flex justify-end">
+        <button onclick="calculateDiagnosticScore()" class="bg-gradient-to-r from-brand-orange to-brand-orange-light hover:brightness-110 text-white px-8 py-3.5 rounded-2xl font-display font-bold text-sm tracking-wide transition shadow-xl shadow-brand-orange/20 flex items-center space-x-2">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>Generar Diagnóstico & Plan Personalizado</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- DIAGNOSTIC RESULTS REPORT MODAL / CONTAINER -->
+    <div id="diagnostic-results" class="hidden bg-brand-surface border-2 border-brand-orange/40 rounded-3xl p-6 sm:p-10 space-y-8">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-brand-border pb-6">
+        <div>
+          <span class="text-xs font-bold text-brand-orange uppercase tracking-wider block mb-1">Resultado de la Auditoría</span>
+          <h3 class="text-2xl font-bold font-display text-white">Dictamen de Madurez en Inteligencia Artificial</h3>
+          <p class="text-slate-400 text-xs mt-1">Evaluación basada en la metodología de las 3 Zonas Clave de Impulso IA.</p>
+        </div>
+        <div class="flex items-center space-x-4 bg-brand-navy p-4 rounded-2xl border border-brand-border">
+          <div class="text-center">
+            <span class="text-xs text-brand-muted block">Puntaje Global</span>
+            <span id="score-percentage" class="text-3xl font-display font-bold text-brand-orange">42%</span>
+          </div>
+          <div class="h-8 w-px bg-brand-border"></div>
+          <div>
+            <span class="text-xs text-brand-muted block">Nivel Actual</span>
+            <span id="score-level-badge" class="text-sm font-bold text-amber-300">Nivel 2: Ad-hoc / Fricción</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown by Zone -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-brand-card p-5 rounded-2xl border border-brand-border">
+          <span class="text-xs text-brand-orange font-bold uppercase block mb-1">Zona de Procesos</span>
+          <div class="text-xl font-bold font-display text-white mb-2" id="score-procesos">45 / 100</div>
+          <p class="text-xs text-slate-400" id="feedback-procesos">
+            Carga crítica en soporte a integraciones de API y conciliación manual. Alto potencial de Quick Win con asistente RAG.
+          </p>
+        </div>
+
+        <div class="bg-brand-card p-5 rounded-2xl border border-brand-border">
+          <span class="text-xs text-brand-teal font-bold uppercase block mb-1">Zona Administrativa</span>
+          <div class="text-xl font-bold font-display text-white mb-2" id="score-admin">38 / 100</div>
+          <p class="text-xs text-slate-400" id="feedback-admin">
+            Oportunidad inmediata en automatización de lectura de pliegos licitatorios GovTech y centralización de memoria técnica.
+          </p>
+        </div>
+
+        <div class="bg-brand-card p-5 rounded-2xl border border-brand-border">
+          <span class="text-xs text-amber-300 font-bold uppercase block mb-1">Zona de Marketing</span>
+          <div class="text-xl font-bold font-display text-white mb-2" id="score-marketing">40 / 100</div>
+          <p class="text-xs text-slate-400" id="feedback-marketing">
+            Estrategia de prospección y contenidos reactiva. Requiere fábrica de contenido y alertas preventivas de churn.
+          </p>
+        </div>
+      </div>
+
+      <!-- Custom Recommended Roadmap -->
+      <div class="bg-brand-card p-6 rounded-2xl border border-brand-border">
+        <h4 class="text-base font-bold text-white mb-3 flex items-center space-x-2">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+          <span>Hoja de Ruta Recomendada para Zona Virtual</span>
+        </h4>
+        <div class="space-y-3 text-xs text-slate-300" id="recommended-actions">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-brand-border">
+        <span class="text-xs text-slate-400">
+          ¿Desea profundizar en este diagnóstico con su equipo directivo?
+        </span>
+        <button onclick="openContactModal()" class="bg-brand-orange hover:bg-brand-orange-dark text-white px-6 py-3 rounded-xl text-xs font-bold transition shadow-lg shadow-brand-orange/30">
+          Agendar Sesión de Devolución con Impulso IA
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- CONTACT MODAL -->
+  <!-- ========================================================================= -->
+  <div id="contact-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-brand-card border border-brand-border max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+      <button onclick="closeContactModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-brand-orange/20 text-brand-orange flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="messages-square" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold font-display text-white">Conversemos</h3>
+        <p class="text-xs text-slate-400 mt-1">
+          La tecnología debe adaptarse a Zonapagos, no Zonapagos a la tecnología.
+        </p>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="p-4 rounded-xl bg-brand-surface border border-brand-border">
+          <span class="text-brand-muted block text-[10px] uppercase font-bold">Líder de Acompañamiento</span>
+          <span class="text-sm font-bold text-white block mt-0.5">Martín Echavarría</span>
+          <span class="text-slate-400 block mt-0.5">Impulso IA (immpulso.dev)</span>
+        </div>
+
+        <a href="https://wa.me/573167589794?text=Hola%20Martín,%20quiero%20coordinar%20una%20reunión%20exploratoria%20sobre%20el%20diagnóstico%20de%20Impulso%20IA%20para%20Zonapagos" target="_blank" class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-xl font-bold transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Abrir Conversación en WhatsApp</span>
+        </a>
+
+        <a href="tel:+573167589794" class="flex items-center justify-center space-x-2 bg-brand-surface hover:bg-brand-border text-slate-200 p-3.5 rounded-xl font-semibold border border-brand-border transition">
+          <i data-lucide="phone" class="w-4 h-4 text-brand-orange"></i>
+          <span>Llamar al +57 316 758 9794</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FOOTER -->
+  <!-- ========================================================================= -->
+  <footer class="bg-brand-surface border-t border-brand-border py-8 text-xs text-brand-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-md bg-brand-orange flex items-center justify-center text-white font-bold text-xs">IM</div>
+        <span class="text-slate-300 font-semibold">Impulso IA · 2026</span>
+        <span>·</span>
+        <span>Reunión Exploratoria & Diagnóstico para Zona Virtual S.A.</span>
+      </div>
+      <div class="flex items-center space-x-6">
+        <a href="https://immpulso.dev" target="_blank" class="hover:text-white transition">immpulso.dev</a>
+        <a href="https://zonavirtual.com" target="_blank" class="hover:text-white transition">zonavirtual.com</a>
+        <a href="#view-diagnostic" onclick="switchMainView('diagnostic')" class="hover:text-brand-orange transition">Autodiagnóstico</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- CLIENT LOGIC & DATA SCRIPTS -->
+  <!-- ========================================================================= -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ---------------------------------------------------------
+    // VIEW SWITCHING (Tabs, Slides, Diagnostic)
+    // ---------------------------------------------------------
+    function switchMainView(view) {
+      const viewTabs = document.getElementById('view-tabs');
+      const viewSlides = document.getElementById('view-slides');
+      const viewDiag = document.getElementById('view-diagnostic');
+      const hero = document.getElementById('hero-banner');
+
+      const btnTabs = document.getElementById('btn-view-tabs');
+      const btnSlides = document.getElementById('btn-view-slides');
+      const btnDiag = document.getElementById('btn-view-diagnostic');
+
+      // Reset buttons
+      [btnTabs, btnSlides, btnDiag].forEach(b => {
+        b.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all duration-200";
+      });
+
+      // Hide all views
+      viewTabs.classList.add('hidden');
+      viewSlides.classList.add('hidden');
+      viewDiag.classList.add('hidden');
+
+      if (view === 'tabs') {
+        viewTabs.classList.remove('hidden');
+        hero.classList.remove('hidden');
+        btnTabs.className = "px-3.5 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow";
+      } else if (view === 'slides') {
+        viewSlides.classList.remove('hidden');
+        hero.classList.add('hidden');
+        btnSlides.className = "px-3.5 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow";
+        renderSlide(currentSlide);
+      } else if (view === 'diagnostic') {
+        viewDiag.classList.remove('hidden');
+        hero.classList.remove('hidden');
+        btnDiag.className = "px-3.5 py-1.5 rounded-lg transition-all duration-200 bg-brand-orange text-white shadow";
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---------------------------------------------------------
+    // TAB SWITCHING INSIDE DOSSIER
+    // ---------------------------------------------------------
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-brand-orange', 'border-brand-orange/40');
+        btn.classList.add('text-slate-300');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('nav-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-300');
+        activeBtn.classList.add('text-brand-orange', 'border-brand-orange/40');
+      }
+      lucide.createIcons();
+    }
+
+    // ---------------------------------------------------------
+    // PITCH DECK SLIDE CONTROLS
+    // ---------------------------------------------------------
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    function renderSlide(index) {
+      document.querySelectorAll('.slide-item').forEach(el => el.classList.add('hidden'));
+      const active = document.getElementById('slide-' + index);
+      if (active) active.classList.remove('hidden');
+
+      document.getElementById('slide-indicator').textContent = `Diapositiva ${index} de ${totalSlides}`;
+      
+      // Render dots
+      const dotsContainer = document.getElementById('slide-dots');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === index ? 'w-6 bg-brand-orange' : 'bg-brand-border hover:bg-slate-500'}`;
+        dot.onclick = () => { currentSlide = i; renderSlide(i); };
+        dotsContainer.appendChild(dot);
+      }
+      lucide.createIcons();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        renderSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        renderSlide(currentSlide);
+      }
+    }
+
+    // Keyboard support for presentation
+    document.addEventListener('keydown', (e) => {
+      const viewSlides = document.getElementById('view-slides');
+      if (!viewSlides.classList.contains('hidden')) {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+      }
+    });
+
+    // ---------------------------------------------------------
+    // ROI CALCULATOR LOGIC
+    // ---------------------------------------------------------
+    function calculateROI() {
+      const devs = parseInt(document.getElementById('slider-devs').value);
+      const reconcileHours = parseInt(document.getElementById('slider-reconcile').value);
+      const rfps = parseInt(document.getElementById('slider-rfp').value);
+      const costPerHour = parseInt(document.getElementById('slider-cost').value);
+
+      document.getElementById('val-devs').textContent = devs + ' personas';
+      document.getElementById('val-reconcile').textContent = reconcileHours + ' horas/sem';
+      document.getElementById('val-rfp').textContent = rfps + ' propuestas';
+      document.getElementById('val-cost').textContent = '$ ' + costPerHour.toLocaleString('es-CO') + ' COP';
+
+      // Calculations:
+      // Dev support: 15h/week/dev, AI saves 70% = 10.5h/week/dev * 48 weeks
+      const devHoursSaved = devs * (15 * 0.70) * 48;
+      // Reconcile: reconcileHours * 48 weeks, AI saves 60%
+      const recHoursSaved = (reconcileHours * 0.60) * 48;
+      // RFP: 30h per proposal, AI saves 70% = 21h per proposal * 12 months * rfps
+      const rfpHoursSaved = rfps * 12 * (30 * 0.70);
+
+      const totalHours = Math.round(devHoursSaved + recHoursSaved + rfpHoursSaved);
+      const totalSavingsCOP = totalHours * costPerHour;
+
+      document.getElementById('res-hours').textContent = totalHours.toLocaleString('es-CO') + ' h';
+      const millions = (totalSavingsCOP / 1000000).toFixed(1);
+      document.getElementById('res-money').textContent = '$ ' + millions + 'M COP';
+    }
+
+    // ---------------------------------------------------------
+    // DIAGNOSTIC QUIZ QUESTIONS & LOGIC
+    // ---------------------------------------------------------
+    const quizQuestions = [
+      {
+        id: 'q1',
+        zone: 'procesos',
+        title: '1. Soporte a Nuevos Clientes y Desarrolladores de APIs',
+        desc: '¿Cómo asiste actualmente a los programadores de sus clientes B2B cuando integran Zonapay o Zonarecaudo?',
+        options: [
+          { text: 'Manual por correo y tickets. Respuestas individuales demoran días según disponibilidad de ingeniería.', score: 1 },
+          { text: 'Contamos con documentación PDF y respuestas pre-redactadas en plantillas de correo.', score: 2 },
+          { text: 'Portal web con documentación técnica básica y entorno Sandbox para pruebas.', score: 3 },
+          { text: 'Asistente de IA (Copiloto RAG) que analiza el código del desarrollador y sugiere correcciones en segundos.', score: 4 }
+        ]
+      },
+      {
+        id: 'q2',
+        zone: 'procesos',
+        title: '2. Conciliación Financiera y Gestión de Descalces',
+        desc: '¿Cómo resuelve las inconsistencias entre transacciones bancarias (ACH/Redeban), corresponsales y el ERP del cliente?',
+        options: [
+          { text: 'Totalmente manual. Analistas cruzan sábanas de Excel al inicio de cada jornada hábil.', score: 1 },
+          { text: 'Uso de macros y scripts ad-hoc para detectar descalces obvios; el resto se investiga a mano.', score: 2 },
+          { text: 'Herramienta interna de cuadre automático con alertas visuales para revisión humana.', score: 3 },
+          { text: 'Agente inteligente que identifica causas de timeout bancario y ejecuta ajustes automáticos bajo reglas.', score: 4 }
+        ]
+      },
+      {
+        id: 'q3',
+        zone: 'procesos',
+        title: '3. Atención al Usuario Pagador en Picos de Vencimiento',
+        desc: '¿Qué ocurre con sus canales de atención cuando miles de contribuyentes o padres de familia pagan a última hora?',
+        options: [
+          { text: 'Líneas y WhatsApp colapsan; largas filas de espera y quejas recurrentes de pagos debitados no reportados.', score: 1 },
+          { text: 'Se contrata personal temporal o se desvían horas de otros departamentos para contestar mensajes.', score: 2 },
+          { text: 'Chatbot básico con menú rígido de opciones que deriva la mayoría de casos a agentes humanos.', score: 3 },
+          { text: 'Agente IA resolutivo que valida la cédula, consulta el estado real en la base transaccional y reenvía el recibo al instante.', score: 4 }
+        ]
+      },
+      {
+        id: 'q4',
+        zone: 'admin',
+        title: '4. Análisis y Postulación a Licitaciones Públicas (GovTech)',
+        desc: '¿Cómo procesa los pliegos de contratación estatal (SECOP) para alcaldías, gobernaciones y tránsito?',
+        options: [
+          { text: 'Lectura visual completa de pliegos de 200 a 400 páginas; dejamos pasar oportunidades por falta de tiempo.', score: 1 },
+          { text: 'Búsqueda por palabras clave en PDFs y reciclaje manual de propuestas anteriores bajo estrés.', score: 2 },
+          { text: 'Matriz estandarizada en Excel donde se reparten secciones del pliego entre el equipo comercial y técnico.', score: 3 },
+          { text: 'Pipeline de IA que extrae matrices de cumplimiento técnico en minutos y pre-redacta la propuesta.', score: 4 }
+        ]
+      },
+      {
+        id: 'q5',
+        zone: 'admin',
+        title: '5. Cumplimiento Normativo Continuo (PCI DSS 4.0 & SARLAFT)',
+        desc: '¿Cómo monitorean y preparan las evidencias periódicas para renovaciones de certificaciones y circulares?',
+        options: [
+          { text: 'Sprints reactivos de alta tensión semanas antes de la auditoría oficial externa.', score: 1 },
+          { text: 'Carpetas compartidas con recolección manual de evidencias por parte de los líderes de TI.', score: 2 },
+          { text: 'Checklist estructurado con asignación de responsables y revisiones trimestrales.', score: 3 },
+          { text: 'Copiloto de cumplimiento continuo que clasifica logs, audita políticas y genera resúmenes para el comité.', score: 4 }
+        ]
+      },
+      {
+        id: 'q6',
+        zone: 'admin',
+        title: '6. Capacitación del Personal y Cultura de Inteligencia Artificial',
+        desc: '¿Qué nivel de entrenamiento formal en IA tiene actualmente la plantilla de Zona Virtual?',
+        options: [
+          { text: 'Ninguna capacitación. Algunos empleados usan ChatGPT gratuito por su cuenta sin supervisión.', score: 1 },
+          { text: 'Charlas de sensibilización generales de 1 hora sobre las posibilidades teóricas de la IA.', score: 2 },
+          { text: 'Cursos virtuales teóricos comprados en plataformas externas (Coursera/Udemy) sin aplicación a procesos.', score: 3 },
+          { text: 'Programa estructurado por roles (Básico y Avanzado) trabajando sobre procesos reales y con capacidad instalada.', score: 4 }
+        ]
+      },
+      {
+        id: 'q7',
+        zone: 'marketing',
+        title: '7. Prospección Comercial B2B en Nichos Especializados',
+        desc: '¿Cómo identifica y contacta nuevos colegios, universidades o municipios antes de sus fechas de recaudo?',
+        options: [
+          { text: 'Reactivamente por referidos, llamadas en frío tradicionales o cuando el cliente llega a la web.', score: 1 },
+          { text: 'Bases de datos estáticas compradas con envíos masivos de correos electrónicos genéricos.', score: 2 },
+          { text: 'Equipo comercial con metas de prospección estructurada en LinkedIn y eventos de la industria.', score: 3 },
+          { text: 'Motor inteligente de prospección que rastrea calendarios de recaudo y redacta propuestas de valor hiperpersonalizadas.', score: 4 }
+        ]
+      },
+      {
+        id: 'q8',
+        zone: 'marketing',
+        title: '8. Posicionamiento de Autoridad y Contenido (Thought Leadership)',
+        desc: '¿Con qué frecuencia publica análisis técnicos y educativos sobre temas de vanguardia (Bre-B, 3DS, pagos mixtos)?',
+        options: [
+          { text: 'Muy poco o nulo. El blog y redes sociales están estáticos la mayor parte del año.', score: 1 },
+          { text: 'Publicaciones ocasionales de noticias corporativas o saludos de fechas festivas.', score: 2 },
+          { text: 'Artículos mensuales redactados manualmente sobre temas generales de comercio electrónico.', score: 3 },
+          { text: 'Fábrica editorial con IA que produce whitepapers, calculadoras de ROI y análisis regulatorios para decisores financieros.', score: 4 }
+        ]
+      }
+    ];
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((q, idx) => {
+        const qCard = document.createElement('div');
+        qCard.className = "bg-brand-surface p-6 rounded-2xl border border-brand-border space-y-4";
+        
+        let zoneBadge = '';
+        if (q.zone === 'procesos') zoneBadge = '<span class="text-[10px] font-bold text-brand-orange bg-brand-orange/15 px-2.5 py-0.5 rounded-full uppercase">Procesos</span>';
+        if (q.zone === 'admin') zoneBadge = '<span class="text-[10px] font-bold text-brand-teal bg-brand-teal/15 px-2.5 py-0.5 rounded-full uppercase">Administrativa</span>';
+        if (q.zone === 'marketing') zoneBadge = '<span class="text-[10px] font-bold text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full uppercase">Marketing</span>';
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          optionsHtml += `
+            <label class="flex items-start space-x-3 p-3 rounded-xl border border-brand-border hover:bg-brand-card cursor-pointer transition">
+              <input type="radio" name="${q.id}" value="${opt.score}" class="mt-1 accent-brand-orange" ${optIdx === 0 ? 'checked' : ''}>
+              <span class="text-xs text-slate-300 leading-relaxed">${opt.text}</span>
+            </label>
+          `;
+        });
+
+        qCard.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold font-display text-white">${q.title}</h3>
+            ${zoneBadge}
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">${q.desc}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            ${optionsHtml}
+          </div>
+        `;
+        container.appendChild(qCard);
+      });
+      lucide.createIcons();
+    }
+
+    function calculateDiagnosticScore() {
+      let totalScore = 0;
+      let maxScore = quizQuestions.length * 4;
+
+      let scoreProcesos = 0;
+      let maxProcesos = 0;
+      let scoreAdmin = 0;
+      let maxAdmin = 0;
+      let scoreMkt = 0;
+      let maxMkt = 0;
+
+      quizQuestions.forEach(q => {
+        const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+        const val = selected ? parseInt(selected.value) : 1;
+        totalScore += val;
+
+        if (q.zone === 'procesos') { scoreProcesos += val; maxProcesos += 4; }
+        if (q.zone === 'admin') { scoreAdmin += val; maxAdmin += 4; }
+        if (q.zone === 'marketing') { scoreMkt += val; maxMkt += 4; }
+      });
+
+      const pctGlobal = Math.round((totalScore / maxScore) * 100);
+      const pctProcesos = Math.round((scoreProcesos / maxProcesos) * 100);
+      const pctAdmin = Math.round((scoreAdmin / maxAdmin) * 100);
+      const pctMkt = Math.round((scoreMkt / maxMkt) * 100);
+
+      document.getElementById('score-percentage').textContent = pctGlobal + '%';
+      document.getElementById('score-procesos').textContent = pctProcesos + ' / 100';
+      document.getElementById('score-admin').textContent = pctAdmin + ' / 100';
+      document.getElementById('score-marketing').textContent = pctMkt + ' / 100';
+
+      const badge = document.getElementById('score-level-badge');
+      const actionsContainer = document.getElementById('recommended-actions');
+      actionsContainer.innerHTML = '';
+
+      if (pctGlobal < 40) {
+        badge.textContent = "Nivel 1: Exploratorio / Alta Fricción Manual";
+        badge.className = "text-sm font-bold text-rose-400";
+      } else if (pctGlobal < 70) {
+        badge.textContent = "Nivel 2: En Transición / Oportunidad de Escalamiento";
+        badge.className = "text-sm font-bold text-amber-300";
+      } else {
+        badge.textContent = "Nivel 3: Madurez Avanzada con Capacidad Instalada";
+        badge.className = "text-sm font-bold text-emerald-400";
+      }
+
+      // Populate actions
+      const actions = [
+        `<strong>Prioridad Inmediata (Semanas 1-4):</strong> Implementar el copiloto RAG de integración de APIs de Zonapagos para descongestionar a ingeniería de soporte de desarrolladores.`,
+        `<strong>Blindaje Administrativo (Semanas 5-8):</strong> Desplegar el pipeline de extracción de pliegos de contratación pública para triplicar la velocidad de postulación en GovTech.`,
+        `<strong>Crecimiento B2B (Semanas 9-12):</strong> Activar la fábrica de contenidos especializados en Bre-B y 3DS para captar directores financieros de universidades y cooperativas.`,
+        `<strong>Core Transaccional (Semanas 13+):</strong> Automatizar las excepciones de conciliación 360° para erradicar el cuadre manual de lotes en Excel.`
+      ];
+
+      actions.forEach(act => {
+        const item = document.createElement('div');
+        item.className = "flex items-start space-x-2 bg-brand-navy p-3 rounded-xl border border-brand-border";
+        item.innerHTML = `<i data-lucide="arrow-right" class="w-4 h-4 text-brand-orange mt-0.5 flex-shrink-0"></i><span>${act}</span>`;
+        actionsContainer.appendChild(item);
+      });
+
+      const resultsBox = document.getElementById('diagnostic-results');
+      resultsBox.classList.remove('hidden');
+      resultsBox.scrollIntoView({ behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    // Modal controllers
+    function openContactModal() {
+      document.getElementById('contact-modal').classList.remove('hidden');
+      document.getElementById('contact-modal').classList.add('flex');
+    }
+    function closeContactModal() {
+      document.getElementById('contact-modal').classList.add('hidden');
+      document.getElementById('contact-modal').classList.remove('flex');
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateROI();
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
